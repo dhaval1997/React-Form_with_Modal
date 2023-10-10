@@ -1,26 +1,22 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Button from "../UI/Button";
-import ErrorModel from "../UI/ErrorModel";
+import ErrorModal from "../UI/ErrorModel";
 
 const Form = (props) => {
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
+  const collegeInputRef = useRef();
+
   const [error, setError] = useState();
-  const [enteredName, setEnteredName] = useState("");
-  const [enteredAge, setEnteredAge] = useState("");
-
-  const nameHandler = (e) => {
-    setEnteredName(e.target.value);
-  };
-
-  const ageHandler = (e) => {
-    setEnteredAge(e.target.value);
-  };
-
   const formHandler = (e) => {
+    const enteredName = nameInputRef.current.value;
+    const enteredAge = ageInputRef.current.value;
+    const enteredcollege = collegeInputRef.current.value;
     e.preventDefault();
-    if (enteredAge.trim().length === 0 || enteredName.trim().length === 0) {
+    if (enteredAge.trim().length === 0 || enteredName.trim().length === 0 || enteredcollege.trim().length===0) {
       setError({
         title: "Invalid Input",
-        message: "Please enter a valid name and age (non-empty values).",
+        message: "Please enter a valid name college and age (non-empty values).",
       });
       return;
     }
@@ -34,10 +30,12 @@ const Form = (props) => {
     const formDetails = {
       name: enteredName,
       age: enteredAge,
+      college: enteredcollege
     };
     props.onUserAdd(formDetails);
-    setEnteredAge("");
-    setEnteredName("");
+    nameInputRef.current.value = "";
+    ageInputRef.current.value = "";
+    collegeInputRef.current.value = "";
   };
 
   const errorHadler = () => {
@@ -47,27 +45,19 @@ const Form = (props) => {
   return (
     <div>
       {error && (
-        <ErrorModel
+        <ErrorModal
           title={error.title}
           message={error.message}
           onConfirm={errorHadler}
         />
       )}
       <form className="form-container" onSubmit={formHandler}>
-        <label>UserName</label>
-        <input
-          value={enteredName}
-          onChange={nameHandler}
-          type="text"
-          placeholder="Enter Username"
-        />
-        <label>Age</label>
-        <input
-          value={enteredAge}
-          onChange={ageHandler}
-          type="number"
-          placeholder="Enter age"
-        />
+        <label htmlFor="userName" >UserName</label>
+        <input id="userName" type="text" ref={nameInputRef} placeholder="Enter Username" />
+        <label htmlFor="collegeName">College Name</label>
+        <input id="collegeName" type="text" ref={collegeInputRef} placeholder="Enter College Name" />
+        <label htmlFor="password" >Age</label>
+        <input id="password" type="number" ref={ageInputRef} placeholder="Enter age" />
         <Button type="submit">Submit</Button>
       </form>
     </div>
